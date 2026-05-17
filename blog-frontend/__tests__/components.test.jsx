@@ -225,29 +225,35 @@ describe('Blog Components', () => {
       const user = userEvent.setup()
       const mockSubmit = jest.fn()
 
-      const MockLoginForm = ({ onSubmit }) => (
-        <form onSubmit={(e) => {
-          e.preventDefault()
-          onSubmit({
-            email: e.target.email.value,
-            password: e.target.password.value,
-          })
-        }}>
-          <input 
-            name="email"
-            type="email" 
-            placeholder="Email" 
-            required 
-          />
-          <input 
-            name="password"
-            type="password" 
-            placeholder="Password" 
-            required 
-          />
-          <button type="submit">Sign In</button>
-        </form>
-      )
+      const MockLoginForm = ({ onSubmit }) => {
+        const [email, setEmail] = React.useState('')
+        const [password, setPassword] = React.useState('')
+
+        return (
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            onSubmit({ email, password })
+          }}>
+            <input 
+              name="email"
+              type="email" 
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+            <input 
+              name="password"
+              type="password" 
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+            />
+            <button type="submit">Sign In</button>
+          </form>
+        )
+      }
 
       render(<MockLoginForm onSubmit={mockSubmit} />)
 
@@ -335,36 +341,44 @@ describe('Blog Components', () => {
       const user = userEvent.setup()
       const mockSave = jest.fn()
 
-      const MockPostEditor = ({ onSave, onCancel }) => (
-        <form onSubmit={(e) => {
-          e.preventDefault()
-          onSave({
-            title: e.target.title.value,
-            content: e.target.content.value,
-            excerpt: e.target.excerpt.value,
-          })
-        }}>
-          <input 
-            name="title"
-            type="text" 
-            placeholder="Post Title" 
-            required 
-          />
-          <textarea 
-            name="content"
-            placeholder="Post Content" 
-            required 
-          />
-          <input 
-            name="excerpt"
-            type="text" 
-            placeholder="Excerpt" 
-            required 
-          />
-          <button type="submit">Save Post</button>
-          <button type="button" onClick={onCancel}>Cancel</button>
-        </form>
-      )
+      const MockPostEditor = ({ onSave, onCancel }) => {
+        const [title, setTitle] = React.useState('')
+        const [content, setContent] = React.useState('')
+        const [excerpt, setExcerpt] = React.useState('')
+
+        return (
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            onSave({ title, content, excerpt })
+          }}>
+            <input 
+              name="title"
+              type="text" 
+              placeholder="Post Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required 
+            />
+            <textarea 
+              name="content"
+              placeholder="Post Content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required 
+            />
+            <input 
+              name="excerpt"
+              type="text" 
+              placeholder="Excerpt"
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+              required 
+            />
+            <button type="submit">Save Post</button>
+            <button type="button" onClick={onCancel}>Cancel</button>
+          </form>
+        )
+      }
 
       render(
         <MockPostEditor 

@@ -38,21 +38,43 @@ describe('Authentication Integration Tests', () => {
         user: { id: 1, email: 'test@example.com', name: 'Test User' },
       })
 
-      const MockSignupPage = ({ onRegister }) => (
-        <form onSubmit={(e) => {
-          e.preventDefault()
-          onRegister({
-            name: e.target.name.value,
-            email: e.target.email.value,
-            password: e.target.password.value,
-          })
-        }}>
-          <input name="name" placeholder="Full Name" required />
-          <input name="email" type="email" placeholder="Email" required />
-          <input name="password" type="password" placeholder="Password" required />
-          <button type="submit">Create Account</button>
-        </form>
-      )
+      const MockSignupPage = ({ onRegister }) => {
+        const [name, setName] = React.useState('')
+        const [email, setEmail] = React.useState('')
+        const [password, setPassword] = React.useState('')
+
+        return (
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            onRegister({ name, email, password })
+          }}>
+            <input 
+              name="name" 
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required 
+            />
+            <input 
+              name="email" 
+              type="email" 
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+            <input 
+              name="password" 
+              type="password" 
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+            />
+            <button type="submit">Create Account</button>
+          </form>
+        )
+      }
 
       const handleRegister = jest.fn(async (data) => {
         const result = await mockRegisterUser(data)
@@ -80,16 +102,15 @@ describe('Authentication Integration Tests', () => {
       mockRegisterUser.mockRejectedValue(new Error('Email already exists'))
 
       const MockSignupPage = ({ onRegister }) => {
+        const [name, setName] = React.useState('')
+        const [email, setEmail] = React.useState('')
+        const [password, setPassword] = React.useState('')
         const [error, setError] = React.useState('')
 
         const handleSubmit = async (e) => {
           e.preventDefault()
           try {
-            await onRegister({
-              name: e.target.name.value,
-              email: e.target.email.value,
-              password: e.target.password.value,
-            })
+            await onRegister({ name, email, password })
           } catch (err) {
             setError(err.message)
           }
@@ -97,9 +118,29 @@ describe('Authentication Integration Tests', () => {
 
         return (
           <form onSubmit={handleSubmit}>
-            <input name="name" placeholder="Full Name" required />
-            <input name="email" type="email" placeholder="Email" required />
-            <input name="password" type="password" placeholder="Password" required />
+            <input 
+              name="name" 
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required 
+            />
+            <input 
+              name="email" 
+              type="email" 
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+            <input 
+              name="password" 
+              type="password" 
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+            />
             <button type="submit">Create Account</button>
             {error && <div role="alert">{error}</div>}
           </form>
@@ -133,19 +174,35 @@ describe('Authentication Integration Tests', () => {
         user: { id: 1, email: 'test@example.com', name: 'Test User' },
       })
 
-      const MockLoginPage = ({ onLogin }) => (
-        <form onSubmit={(e) => {
-          e.preventDefault()
-          onLogin({
-            email: e.target.email.value,
-            password: e.target.password.value,
-          })
-        }}>
-          <input name="email" type="email" placeholder="Email" required />
-          <input name="password" type="password" placeholder="Password" required />
-          <button type="submit">Sign In</button>
-        </form>
-      )
+      const MockLoginPage = ({ onLogin }) => {
+        const [email, setEmail] = React.useState('')
+        const [password, setPassword] = React.useState('')
+
+        return (
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            onLogin({ email, password })
+          }}>
+            <input 
+              name="email" 
+              type="email" 
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+            <input 
+              name="password" 
+              type="password" 
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+            />
+            <button type="submit">Sign In</button>
+          </form>
+        )
+      }
 
       const handleLogin = jest.fn(async (data) => {
         const result = await mockLoginUser(data)
@@ -171,15 +228,14 @@ describe('Authentication Integration Tests', () => {
       mockLoginUser.mockRejectedValue(new Error('Invalid credentials'))
 
       const MockLoginPage = ({ onLogin }) => {
+        const [email, setEmail] = React.useState('')
+        const [password, setPassword] = React.useState('')
         const [error, setError] = React.useState('')
 
         const handleSubmit = async (e) => {
           e.preventDefault()
           try {
-            await onLogin({
-              email: e.target.email.value,
-              password: e.target.password.value,
-            })
+            await onLogin({ email, password })
           } catch (err) {
             setError(err.message)
           }
@@ -187,8 +243,22 @@ describe('Authentication Integration Tests', () => {
 
         return (
           <form onSubmit={handleSubmit}>
-            <input name="email" type="email" placeholder="Email" required />
-            <input name="password" type="password" placeholder="Password" required />
+            <input 
+              name="email" 
+              type="email" 
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+            <input 
+              name="password" 
+              type="password" 
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+            />
             <button type="submit">Sign In</button>
             {error && <div role="alert">{error}</div>}
           </form>
