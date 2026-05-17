@@ -186,7 +186,7 @@ export default function LoginPage() {
             {"\"Every story you write is a piece of your soul shared with the world.\""}
           </blockquote>
           <p className="text-muted-foreground">
-            Be part of a space where writers share their thoughts.
+            Join thousands of writers sharing their unique perspectives.
           </p>
         </div>
       </div>
