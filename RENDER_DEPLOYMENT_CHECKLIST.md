@@ -8,7 +8,11 @@
 - [ ] Git repository initialized (if using auto-deploy)
 - [ ] All environment variables documented
 
-## Step 1: Push Images to Docker Hub
+## Step 1: Push Imag
+
+
+
+es to Docker Hub
 
 - [ ] Run `docker login`
 - [ ] Build backend: `docker build -t yourusername/blog-backend:latest ./blog-backend`
