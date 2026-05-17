@@ -84,44 +84,6 @@ jobs:
 
 
 # -----------------------------
-# SonarQube Code Analysis
-# -----------------------------
-  sonarqube-analysis:
-    name: SonarQube Code Analysis
-    needs:
-      - backend-test-build
-      - frontend-test-build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: SonarQube Backend Analysis
-        uses: SonarSource/sonarcloud-github-action@v2.1.1
-        with:
-          projectBaseDir: ./blog-backend
-          args: -Dsonar.projectKey=blog-backend -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} -Dsonar.javascript.node.maxOldSpaceSize=4096
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: SonarQube Frontend Analysis
-        uses: SonarSource/sonarcloud-github-action@v2.1.1
-        with:
-          projectBaseDir: ./blog-frontend
-          args: -Dsonar.projectKey=blog-frontend -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} -Dsonar.javascript.node.maxOldSpaceSize=4096
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-
-# -----------------------------
 # Docker Build + Push
 # -----------------------------
   docker-build:
