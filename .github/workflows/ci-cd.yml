@@ -136,14 +136,29 @@ jobs:
     needs: docker-build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    environment: production
 
     steps:
       - name: Deploy Backend
+        env:
+          BACKEND_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL_BACKEND }}
         run: |
-          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL_BACKEND }}"
+          if [ -z "$BACKEND_HOOK" ]; then
+            echo "ERROR: RENDER_DEPLOY_HOOK_URL_BACKEND is not set"
+            exit 1
+          fi
+          echo "Triggering backend deployment..."
+          curl -f -X POST "$BACKEND_HOOK"
+          echo "Backend deployment triggered successfully"
 
       - name: Deploy Frontend
+        env:
+          FRONTEND_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL_FRONTEND }}
         run: |
-          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL_FRONTEND }}"
-
-          curl -fsS -X POST "$RENDER_FRONTEND_DEPLOY_HOOK_URL"
+          if [ -z "$FRONTEND_HOOK" ]; then
+            echo "ERROR: RENDER_DEPLOY_HOOK_URL_FRONTEND is not set"
+            exit 1
+          fi
+          echo "Triggering frontend deployment..."
+          curl -f -X POST "$FRONTEND_HOOK"
+          echo "Frontend deployment triggered successfully"
