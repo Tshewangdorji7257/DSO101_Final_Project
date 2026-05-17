@@ -14,7 +14,7 @@ env:
 jobs:
 
 # -----------------------------
-# Backend Test + Build
+# Backend Test + Build + SonarQube
 # -----------------------------
   backend-test-build:
     name: Backend Test and Build
@@ -44,9 +44,18 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: SonarQube Backend Analysis
+        uses: SonarSource/sonarcloud-github-action@v2.1.1
+        with:
+          projectBaseDir: ./blog-backend
+          args: -Dsonar.projectKey=blog-backend -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 
 # -----------------------------
-# Frontend Test + Build
+# Frontend Test + Build + SonarQube
 # -----------------------------
   frontend-test-build:
     name: Frontend Test and Build
@@ -81,6 +90,15 @@ jobs:
 
       - name: Build frontend
         run: pnpm build
+
+      - name: SonarQube Frontend Analysis
+        uses: SonarSource/sonarcloud-github-action@v2.1.1
+        with:
+          projectBaseDir: ./blog-frontend
+          args: -Dsonar.projectKey=blog-frontend -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
 # -----------------------------
