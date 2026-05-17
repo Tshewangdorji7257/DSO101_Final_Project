@@ -35,7 +35,7 @@ export function Hero({ user }: HeroProps) {
           </h1>
           
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed text-pretty">
-            {user.bio || "Share your thoughts, stories, and reflections with the world, and inspire meaningful conversations by expressing what matters most to you"}
+            Share your thoughts, stories, and reflections with the world, and inspire meaningful conversations by expressing what matters most to you
           </p>
         </div>
       </section>
