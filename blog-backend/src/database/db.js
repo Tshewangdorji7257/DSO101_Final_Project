@@ -2,6 +2,7 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,8 +11,19 @@ let db = null;
 
 export async function initializeDatabase() {
   try {
+    // Use persistent disk on Render, or local directory in development
+    const dbDir = process.env.DATABASE_DIR || path.join(__dirname, '../../data');
+    
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
+
+    const dbPath = path.join(dbDir, 'blog.db');
+    console.log('Database path:', dbPath);
+
     db = await open({
-      filename: path.join(__dirname, '../../blog.db'),
+      filename: dbPath,
       driver: sqlite3.Database
     });
 

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/lib/auth-context'
 import { EditorProvider } from '@/lib/editor-context'
 import './globals.css'
@@ -53,7 +52,6 @@ export default function RootLayout({
             {children}
           </EditorProvider>
         </AuthProvider>
-        <Analytics />
       </body>
     </html>
   )

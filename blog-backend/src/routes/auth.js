@@ -10,11 +10,19 @@ router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    console.log('Register request:', { name, email, passwordLength: password?.length });
+
     if (!name || !email || !password) {
+      console.log('Missing fields:', { name: !!name, email: !!email, password: !!password });
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
 
     const db = getDatabase();
+    
+    if (!db) {
+      console.error('Database not initialized');
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
 
     // Check if email already exists
     const existingUser = await db.get('SELECT id FROM users WHERE email = ?', [email]);
@@ -46,7 +54,7 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('Register error:', error);
-    res.status(500).json({ error: 'Registration failed' });
+    res.status(500).json({ error: 'Registration failed', details: error.message });
   }
 });
 
