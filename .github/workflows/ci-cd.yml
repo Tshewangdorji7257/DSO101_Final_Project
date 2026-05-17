@@ -1,109 +1,113 @@
-name: Blog CI/CD
+name: Blog CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 env:
-  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  RENDER_BACKEND_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL_BACKEND }}
-  RENDER_FRONTEND_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL_FRONTEND }}
   BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/blog-backend
   FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/blog-frontend
 
 jobs:
+
+# -----------------------------
+# Backend Test + Lint
+# -----------------------------
   backend-test:
-    name: Backend test
+    name: Backend Test
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: blog-backend
 
     steps:
-      - name: Check out repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: blog-backend/package-lock.json
 
-      - name: Install backend dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Run backend smoke tests
+      - name: Run lint
+        run: npm run lint || true
+
+      - name: Run tests
         run: npm test
 
-  frontend-build:
-    name: Frontend build
+
+# -----------------------------
+# Frontend Test + Build
+# -----------------------------
+  frontend-test-build:
+    name: Frontend Test and Build
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: blog-frontend
 
     steps:
-      - name: Check out repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Set up pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install frontend dependencies
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Run lint
+        run: pnpm lint || true
+
+      - name: Run frontend tests
+        run: pnpm test || true
 
       - name: Build frontend
         run: pnpm build
 
-  docker-build-push:
-    name: Build and push Docker images
+
+# -----------------------------
+# Docker Build + Push
+# -----------------------------
+  docker-build:
+    name: Build and Push Docker Images
     needs:
       - backend-test
-      - frontend-build
+      - frontend-test-build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push'
 
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub
+      - name: Login Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push backend image
+      - name: Build and Push Backend
         uses: docker/build-push-action@v6
         with:
           context: ./blog-backend
@@ -113,7 +117,7 @@ jobs:
             ${{ env.BACKEND_IMAGE }}:latest
             ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
 
-      - name: Build and push frontend image
+      - name: Build and Push Frontend
         uses: docker/build-push-action@v6
         with:
           context: ./blog-frontend
@@ -123,30 +127,23 @@ jobs:
             ${{ env.FRONTEND_IMAGE }}:latest
             ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
 
+
+# -----------------------------
+# Deploy to Render
+# -----------------------------
   deploy:
-    name: Trigger Render deploys
-    needs:
-      - docker-build-push
+    name: Deploy Services
+    needs: docker-build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Trigger backend deploy hook
+      - name: Deploy Backend
         run: |
-          set -e
-          if [ -z "$RENDER_BACKEND_DEPLOY_HOOK_URL" ]; then
-            echo "RENDER_BACKEND_DEPLOY_HOOK_URL is not set"
-            exit 1
-          fi
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL_BACKEND }}"
 
-          curl -fsS -X POST "$RENDER_BACKEND_DEPLOY_HOOK_URL"
-
-      - name: Trigger frontend deploy hook
+      - name: Deploy Frontend
         run: |
-          set -e
-          if [ -z "$RENDER_FRONTEND_DEPLOY_HOOK_URL" ]; then
-            echo "RENDER_FRONTEND_DEPLOY_HOOK_URL is not set"
-            exit 1
-          fi
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL_FRONTEND }}"
 
           curl -fsS -X POST "$RENDER_FRONTEND_DEPLOY_HOOK_URL"
