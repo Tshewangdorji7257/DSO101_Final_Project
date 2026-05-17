@@ -8,7 +8,7 @@ const mockLoginUser = jest.fn()
 const mockRegisterUser = jest.fn()
 const mockFetchPosts = jest.fn()
 
-jest.mock('../../lib/api', () => ({
+jest.mock('../lib/api', () => ({
   loginUser: mockLoginUser,
   registerUser: mockRegisterUser,
   fetchPosts: mockFetchPosts,

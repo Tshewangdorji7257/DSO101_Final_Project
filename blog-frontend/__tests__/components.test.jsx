@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 
 // Mock the API module
-jest.mock('../../lib/api', () => ({
+jest.mock('../lib/api', () => ({
   fetchPosts: jest.fn(),
   createPost: jest.fn(),
   updatePost: jest.fn(),
