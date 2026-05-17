@@ -14,10 +14,10 @@ env:
 jobs:
 
 # -----------------------------
-# Backend Test + Lint
+# Backend Test + Build
 # -----------------------------
-  backend-test:
-    name: Backend Test
+  backend-test-build:
+    name: Backend Test and Build
     runs-on: ubuntu-latest
 
     defaults:
@@ -89,7 +89,7 @@ jobs:
   docker-build:
     name: Build and Push Docker Images
     needs:
-      - backend-test
+      - backend-test-build
       - frontend-test-build
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
