@@ -1,0 +1,43 @@
+10010	WASC	6	Alert on HTTP Response Header Injection	WARN
+10011	WASC	6	Alert on Cookie HttpOnly Flag Missing	WARN
+10012	WASC	7	Alert on Cache Control Missing	WARN
+10013	WASC	8	Alert on Content Security Policy Missing	WARN
+10015	WASC	14	Alert on Password Autocomplete	WARN
+10016	WASC	14	Alert on Web Browser XSS Protection Not Enabled	WARN
+10017	WASC	7	Alert on X-Content-Type-Options Header Missing	WARN
+10019	WASC	6	Alert on Content Type Missing	WARN
+10020	WASC	6	Alert on X-Frame-Options Header Missing	WARN
+10021	WASC	7	Alert on X-XSS-Protection Header Missing	WARN
+10022	WASC	15	Alert on Information Disclosure - Server Version	WARN
+10023	WASC	15	Alert on Information Disclosure - Backend Version	WARN
+10024	WASC	15	Alert on Information Disclosure - Suspicious Comments	WARN
+10025	WASC	13	Alert on Information Disclosure - User Account Control	WARN
+10026	WASC	15	Alert on Information Disclosure - Application Error Message	WARN
+10027	WASC	15	Alert on Information Disclosure - Stack Traces	WARN
+10037	WASC	8	Alert on Server Leaks Information Via	WARN
+10040	WASC	8	Alert on Insufficient Authentication	WARN
+10043	WASC	8	Alert on HTTPS Content Mixed With HTTP	WARN
+10045	WASC	8	Alert on Directory Browsing	WARN
+10047	WASC	8	Alert on CORS Policy Missing	WARN
+10050	WASC	1	Alert on HTTP Parameter Pollution	WARN
+20014	WASC	6	Alert on Insecure HTTP Method	WARN
+30001	WASC	16	Alert on Potentially Dangerous File	WARN
+30002	WASC	16	Alert on Potentially Dangerous File Type	WARN
+40001	CWE	639	Alert on SQL Injection	ERROR
+40008	CWE	79	Alert on Cross Site Scripting (XSS)	ERROR
+40009	CWE	89	Alert on SQL Injection	ERROR
+40012	CWE	94	Alert on Remote Code Execution	ERROR
+40014	CWE	434	Alert on Insecure File Upload	ERROR
+40015	CWE	434	Alert on Server-Side Include (SSI)	ERROR
+40016	CWE	434	Alert on Path Traversal	ERROR
+40017	CWE	434	Alert on Remote File Inclusion	ERROR
+40018	CWE	434	Alert on Server-Side Template Injection (SSTI)	ERROR
+40019	CWE	434	Alert on Server-Side Object Injection	ERROR
+40020	CWE	434	Alert on XPath Injection	ERROR
+40021	CWE	434	Alert on LDAP Injection	ERROR
+40022	CWE	434	Alert on OS Command Injection	ERROR
+40023	CWE	434	Alert on NoSQL Injection	ERROR
+40024	CWE	434	Alert on Expression Language (EL) Injection	ERROR
+90023	CWE	384	Alert on Session Fixation	ERROR
+90024	CWE	384	Alert on Session Timeout	WARN
+90025	CWE	384	Alert on Logout URL Not Found	WARN

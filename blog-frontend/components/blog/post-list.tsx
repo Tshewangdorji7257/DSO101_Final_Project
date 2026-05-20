@@ -1,6 +1,7 @@
 "use client";
 
 import { BlogPost } from "@/lib/types";
+import { blogStyles } from "@/lib/blog-styles";
 import { PostCard } from "./post-card";
 
 interface PostListProps {
@@ -14,8 +15,8 @@ interface PostListProps {
 export function PostList({ posts, onPostClick, onEdit, onDelete, currentUserId }: PostListProps) {
   if (posts.length === 0) {
     return (
-      <div className="text-center py-20">
-        <p className="text-muted-foreground text-lg">No posts yet. Start writing your first article!</p>
+      <div className={blogStyles.text.emptyState}>
+        <p className={blogStyles.text.emptyStateMessage}>No posts yet. Start writing your first article!</p>
       </div>
     );
   }
@@ -23,10 +24,10 @@ export function PostList({ posts, onPostClick, onEdit, onDelete, currentUserId }
   const [featuredPost, ...otherPosts] = posts;
 
   return (
-    <section className="max-w-6xl mx-auto px-6 pb-20">
-      <div className="flex items-center gap-4 mb-10">
-        <h2 className="font-serif text-2xl font-bold">Latest Articles</h2>
-        <div className="flex-1 h-px bg-border" />
+    <section className={blogStyles.layout.container}>
+      <div className={blogStyles.layout.headerGap}>
+        <h2 className={blogStyles.text.heading}>Latest Articles</h2>
+        <div className={blogStyles.layout.divider} />
       </div>
 
       {featuredPost && (
@@ -42,7 +43,7 @@ export function PostList({ posts, onPostClick, onEdit, onDelete, currentUserId }
       )}
 
       {otherPosts.length > 0 && (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={blogStyles.layout.grid2}>
           {otherPosts.map((post) => (
             <PostCard 
               key={post.id} 

@@ -1,6 +1,7 @@
 "use client";
 
 import { BlogPost } from "@/lib/types";
+import { blogStyles } from "@/lib/blog-styles";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, ArrowRight, Edit2, Trash2 } from "lucide-react";
@@ -36,6 +37,144 @@ export function PostCard({ post, featured = false, onClick, onEdit, onDelete }: 
     e.stopPropagation();
     onDelete?.(post.id);
   };
+
+  if (featured) {
+    return (
+      <Card 
+        className={blogStyles.card.featured}
+        onClick={onClick}
+      >
+        <div className={blogStyles.card.grid}>
+          <div className={blogStyles.image.aspect}>
+            <Image
+              src={post.imageUrl}
+              alt={post.title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            <span className={`absolute top-4 left-4 px-3 py-1 bg-accent text-accent-foreground ${blogStyles.text.category}`}>
+              {post.category}
+            </span>
+          </div>
+          
+          <div className="p-8 md:p-10 flex flex-col justify-between bg-card">
+            <div>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                <span>{formattedDate}</span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" />
+                  {post.readTime} min read
+                </span>
+              </div>
+              
+              <h2 className="font-serif text-2xl md:text-3xl font-bold mb-4 group-hover:text-primary transition-colors text-balance">
+                {post.title}
+              </h2>
+              
+              <p className="text-muted-foreground leading-relaxed mb-6 text-pretty">
+                {post.excerpt}
+              </p>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-primary font-medium text-sm group-hover:gap-3 transition-all">
+                Read Article
+                <ArrowRight className="w-4 h-4" />
+              </div>
+              {(onEdit || onDelete) && (
+                <div className={blogStyles.buttons.container} onClick={(e) => e.stopPropagation()}>
+                  {onEdit && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleEditClick}
+                      className={`${blogStyles.buttons.action} text-muted-foreground`}
+                    >
+                      <Edit2 className={blogStyles.buttons.icon} />
+                    </Button>
+                  )}
+                  {onDelete && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleDeleteClick}
+                      className={`${blogStyles.buttons.action} text-destructive`}
+                    >
+                      <Trash2 className={blogStyles.buttons.icon} />
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card 
+      className={blogStyles.card.regular}
+      onClick={onClick}
+    >
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Image
+          src={post.imageUrl}
+          alt={post.title}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <span className={`absolute top-4 left-4 px-3 py-1 bg-background/90 backdrop-blur-sm text-foreground ${blogStyles.text.category}`}>
+          {post.category}
+        </span>
+        {(onEdit || onDelete) && (
+          <div className={blogStyles.buttons.container} onClick={(e) => e.stopPropagation()}>
+            {onEdit && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleEditClick}
+                className={blogStyles.buttons.action}
+              >
+                <Edit2 className={blogStyles.buttons.icon} />
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDeleteClick}
+                className={blogStyles.buttons.action}
+              >
+                <Trash2 className={blogStyles.buttons.icon} />
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+      
+      <div className="p-4 md:p-5">
+        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+          <span>{formattedDate}</span>
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            {post.readTime} min
+          </span>
+        </div>
+        
+        <h3 className={blogStyles.text.title}>
+          {post.title}
+        </h3>
+        
+        <p className={blogStyles.text.excerpt}>
+          {post.excerpt}
+        </p>
+      </div>
+    </Card>
+  );
+}
 
   if (featured) {
     return (
