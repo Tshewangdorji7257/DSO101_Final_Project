@@ -235,7 +235,6 @@ jobs:
         uses: zaproxy/action-api-scan@v0.7.0
         with:
           target: ${{ secrets.PRODUCTION_BACKEND_URL }}
-          rules_file_name: '.zap/api-rules.tsv'
           cmd_options: '-a'
         continue-on-error: true
 
@@ -243,7 +242,6 @@ jobs:
         uses: zaproxy/action-full-scan@v0.7.0
         with:
           target: ${{ secrets.PRODUCTION_FRONTEND_URL }}
-          rules_file_name: '.zap/web-rules.tsv'
           cmd_options: '-a'
         continue-on-error: true
 
@@ -258,7 +256,7 @@ jobs:
           retention-days: 30
 
       - name: Comment ZAP Results on PR
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && always()
         uses: actions/github-script@v7
         with:
           script: |
