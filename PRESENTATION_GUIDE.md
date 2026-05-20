@@ -426,13 +426,11 @@ Status: ✅ ALL PASSING
 ```
 T+0s:   Developer pushes to main branch
             ↓
-T+10s:  GitHub Actions triggered
-            ↓
 T+30s:  Backend tests start running
             ↓
 T+60s:  Frontend tests start running
             ↓
-T+90s:  All tests pass ✓
+T+90s:  SonarQube Code Analysis
             ↓
 T+120s: Docker images built
             ↓
@@ -445,6 +443,9 @@ T+240s: Images pulled on production server
 T+270s: Containers restarted
             ↓
 T+300s: New code LIVE in production ✓
+            ↓
+T+300s: OWASP ZAP Security Scan
+
 ```
 
 **Total Deployment Time: ~5 minutes (100% automated)**
