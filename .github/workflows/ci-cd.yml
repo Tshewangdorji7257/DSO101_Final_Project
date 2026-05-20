@@ -7,6 +7,11 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 env:
   BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/blog-backend
   FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/blog-frontend
