@@ -190,6 +190,93 @@ jobs:
 
 
 # -----------------------------
+# OWASP ZAP Dynamic Security Scan (Post-Deployment)
+# -----------------------------
+  owasp-zap-scan:
+    name: OWASP ZAP Security Scan
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    continue-on-error: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for production services
+        run: |
+          echo "Waiting for production services to be ready..."
+          BACKEND_URL="${{ secrets.PRODUCTION_BACKEND_URL }}"
+          FRONTEND_URL="${{ secrets.PRODUCTION_FRONTEND_URL }}"
+
+          # Wait for backend
+          echo "Checking backend at: $BACKEND_URL"
+          for i in {1..60}; do
+            if curl -f -s "$BACKEND_URL/health" > /dev/null 2>&1; then
+              echo "✓ Backend is ready"
+              break
+            fi
+            echo "Attempt $i: Backend not ready, waiting..."
+            sleep 2
+          done
+
+          # Wait for frontend
+          echo "Checking frontend at: $FRONTEND_URL"
+          for i in {1..60}; do
+            if curl -f -s "$FRONTEND_URL" > /dev/null 2>&1; then
+              echo "✓ Frontend is ready"
+              break
+            fi
+            echo "Attempt $i: Frontend not ready, waiting..."
+            sleep 2
+          done
+
+      - name: Run OWASP ZAP API Scan - Backend
+        uses: zaproxy/action-api-scan@v0.7.0
+        with:
+          target: ${{ secrets.PRODUCTION_BACKEND_URL }}
+          rules_file_name: '.zap/api-rules.tsv'
+          cmd_options: '-a'
+        continue-on-error: true
+
+      - name: Run OWASP ZAP Full Scan - Frontend
+        uses: zaproxy/action-full-scan@v0.7.0
+        with:
+          target: ${{ secrets.PRODUCTION_FRONTEND_URL }}
+          rules_file_name: '.zap/web-rules.tsv'
+          cmd_options: '-a'
+        continue-on-error: true
+
+      - name: Upload ZAP Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-scan-reports
+          path: |
+            report_md.md
+            report_html.html
+          retention-days: 30
+
+      - name: Comment ZAP Results on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'report_md.md';
+            if (fs.existsSync(reportPath)) {
+              const report = fs.readFileSync(reportPath, 'utf8');
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🔒 OWASP ZAP Security Scan Results\n\n${report}`
+              });
+            }
+        continue-on-error: true
+
+
+# -----------------------------
 # Deploy to Render
 # -----------------------------
   deploy:
@@ -223,3 +310,9 @@ jobs:
           echo "Triggering frontend deployment..."
           curl -f -X POST "$FRONTEND_HOOK"
           echo "Frontend deployment triggered successfully"
+
+      - name: Wait for services to stabilize
+        run: |
+          echo "Waiting for deployed services to stabilize..."
+          sleep 30
+          echo "Services should be ready for security scanning"
