@@ -26,10 +26,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@6d193bf28a3ad29cbc546d4b27417b3e854be808 # v4.1.1
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@1e60f620b9541d910712afc25588c75364ef08d3d # v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
@@ -58,15 +58,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@6d193bf28a3ad29cbc546d4b27417b3e854be808 # v4.1.1
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@1e60f620b9541d910712afc25588c75364ef08d3d # v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@d882d12c64e032187b2edb46d3790320f3d21bda # v4.0.0
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
@@ -96,22 +96,22 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@6d193bf28a3ad29cbc546d4b27417b3e854be808 # v4.1.1
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@1e60f620b9541d910712afc25588c75364ef08d3d # v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@d882d12c64e032187b2edb46d3790320f3d21bda # v4.0.0
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
       - name: Cache dependencies
-        uses: actions/cache@6d193bf28a3ad29cbc546d4b27417b3e854be808 # v4.1.1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.m2/repository
@@ -160,16 +160,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4bdcb9442c5b # v3.0.0
+        uses: docker/setup-buildx-action@v3
 
       - name: Login Docker Hub
-        uses: docker/login-action@465a07811f14bebb1938fbed4728d6a1ff0c5cec # v3.0.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Backend
-        uses: docker/build-push-action@2cdde995de11915a773edd2db7b9ab7a4703d84f # v6.0.0
+        uses: docker/build-push-action@v6
         with:
           context: ./blog-backend
           file: ./blog-backend/Dockerfile
@@ -201,7 +201,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@6d193bf28a3ad29cbc546d4b27417b3e854be808 # v4.1.1
+        uses: actions/checkout@v4
 
       - name: Wait for production services
         run: |
@@ -247,7 +247,7 @@ jobs:
 
       - name: Upload ZAP Reports
         if: always()
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae9b # v4.3.6
+        uses: actions/upload-artifact@v4
         with:
           name: zap-scan-reports
           path: |
@@ -257,7 +257,7 @@ jobs:
 
       - name: Comment ZAP Results on PR
         if: github.event_name == 'pull_request' && always()
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
