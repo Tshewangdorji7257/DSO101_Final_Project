@@ -84,6 +84,69 @@ jobs:
 
 
 # -----------------------------
+# SonarQube Code Quality Analysis
+# -----------------------------
+  sonarqube-analysis:
+    name: SonarQube Code Quality Analysis
+    needs:
+      - backend-test-build
+      - frontend-test-build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Install backend dependencies
+        working-directory: blog-backend
+        run: npm ci
+
+      - name: Generate backend coverage
+        working-directory: blog-backend
+        run: npm run test:coverage || true
+
+      - name: Install frontend dependencies
+        working-directory: blog-frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate frontend coverage
+        working-directory: blog-frontend
+        run: pnpm test || true
+
+      - name: SonarQube Scan - Full Project
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: |
+            -Dsonar.projectKey=DSO_FINAL_Project
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+
+
+# -----------------------------
 # Docker Build + Push
 # -----------------------------
   docker-build:
@@ -91,6 +154,7 @@ jobs:
     needs:
       - backend-test-build
       - frontend-test-build
+      - sonarqube-analysis
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
